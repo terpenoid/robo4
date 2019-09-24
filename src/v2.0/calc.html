@@ -1,0 +1,313 @@
+todo: https://www.instructables.com/id/vPython-Spider-Robot-simulator/ <hr>
+
+<style>
+
+canvas {
+	border:1px solid #d3d3d3;
+	display: block;
+	margin-bottom: 20px;
+}
+
+</style>
+
+X: <input type="text" value="100" id="xVal" onchange="calc()">
+Y: <input type="text" value="100" id="yVal" onchange="calc()">
+Z: <input type="text" value="-20" id="zVal" onchange="calc()">
+<br>
+
+Step 1:
+<canvas id="grid1" width="600" height="600"></canvas>
+
+Step 2:
+<canvas id="grid2" width="800" height="800"></canvas>
+
+<script>
+
+function Grid (canvasId) {
+
+	this.showBlindZones = false;
+
+	this.id = canvasId;
+
+	c = document.getElementById(this.id);
+	this.ctx = c.getContext("2d");
+
+	this.axisXLabel = "X";
+	this.axisYLabel = "Y";
+
+	this.scale = 2;
+	this.gridStep = 10;
+	this.maxX = this.ctx.canvas.width;
+	this.maxY = this.ctx.canvas.height;
+	this.offsetX = this.maxX / 2;
+	this.offsetY = this.maxY / 2;
+
+	this.clear = function() {
+		this.ctx.clearRect(0, 0, this.maxX, this.maxY);
+	}
+
+	this.prepareX = function(x) {
+		return x * this.scale + this.offsetX;
+	}
+
+	this.prepareY = function(y) {
+		return this.offsetY - y * this.scale;
+	}
+
+	this.rnd = function(f) {
+		// https://stackoverflow.com/questions/9453421/how-to-round-float-numbers-in-javascript
+		return Number((f).toFixed(2));
+	}
+
+	this.drawCircle = function(x, y, R, color) {
+		if (!color) color = "#0f0";
+		this.ctx.beginPath();
+		this.ctx.arc(this.prepareX(x), this.prepareY(y), R*this.scale, 0, Math.PI*2, true);
+		this.ctx.strokeStyle = color;
+		this.ctx.stroke();
+	}
+	
+	this.drawCircleFill = function(x, y, R, color) {
+		if (!color) color = "#ffaaaa";
+		this.ctx.beginPath();
+		this.ctx.arc(this.prepareX(x), this.prepareY(y), R*this.scale, 0, Math.PI*2, false);
+		this.ctx.fillStyle = color;
+		this.ctx.fill();
+	}
+
+	this.drawPoint = function(x, y, label, color) {
+		if (!color) color = "#f00";
+		this.drawCircle(x, y, 2/this.scale, color);
+		this.ctx.font = "10px sans";
+		this.ctx.fillStyle = "#000";
+		this.ctx.textAlign = "center";
+		this.ctx.fillText(label + " (" + this.rnd(x) + ", " + this.rnd(y) + ")", this.prepareX(x), this.prepareY(y) - 10);
+	}
+
+	this.drawLine = function(x1, y1, x2, y2, color) {
+		if (!color) color = "#00f";
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.prepareX(x1), this.prepareY(y1));
+		this.ctx.lineTo(this.prepareX(x2), this.prepareY(y2));
+		this.ctx.strokeStyle = color;
+		this.ctx.stroke();
+	}
+
+	this.init = function() {
+
+		this.clear();
+
+		if (this.showBlindZones) {
+			//////////////////////////
+			// blind zone
+			this.drawCircleFill(this.maxX/2, this.maxY/2, this.maxX*2, "#ffbbbb");
+			this.drawCircleFill(coxaLength, coxaZShift, femurLength+tibiaLength, "#FFF");
+			this.drawCircleFill(73, -1, tibiaLength, "#FFF");
+			this.drawCircleFill(coxaLength, coxaZShift, 40, "#ffbbbb");
+			this.drawCircleFill(coxaLength, coxaZShift+femurLength, tibiaLength, "#ffbbbb");
+		}
+
+
+		// grid
+		for (x=0-this.offsetX; x<this.maxX/this.scale; x+=this.gridStep) {
+			this.drawLine(x, 0-this.offsetY, x, this.maxY/this.scale, "#eee");
+		}
+
+		for (y=0-this.offsetY; y<this.maxY/this.scale; y+=this.gridStep) {
+			this.drawLine(0-this.offsetX, y, this.maxX/this.scale, y, "#eee");
+		}
+
+		// axises
+		this.drawLine(0-this.offsetX, 0, this.maxX/this.scale, 0, "#ddd"); // X
+		this.drawLine(0, 0-this.offsetY, 0, this.maxY/this.scale, "#ddd"); // Y
+
+		this.ctx.beginPath();
+		this.ctx.arc(this.offsetX, this.offsetY, 2, 0, Math.PI*2, true);
+		this.ctx.strokeStyle = "#ccc";
+		this.ctx.stroke();
+
+		this.ctx.font = "12px sans";
+		this.ctx.fillStyle = "#ccc";
+		this.ctx.textAlign = "center";
+		this.ctx.fillText("0", this.offsetX-10, this.offsetY+15);
+		this.ctx.fillText(this.axisXLabel, this.maxX-20, this.offsetY+15);
+		this.ctx.fillText(this.axisYLabel, this.offsetX-10, 20);
+
+	}
+}
+//--------------------------------------------------
+
+
+
+
+// dimensions
+coxaZShift = 26;
+coxaLength = 27;
+femurLength = 54;
+tibiaLength = 78;
+
+
+function calc() {
+
+	///////
+	var grid1 = new Grid("grid1");
+	grid1.scale = 3.87;
+	grid1.gridStep = 10;
+	grid1.offsetY = grid1.maxY-50;
+	grid1.offsetX = 50;
+	grid1.init();
+
+	//////
+	var grid2 = new Grid("grid2");
+	grid2.scale = 3.87;
+	grid2.showBlindZones = true;
+	grid2.offsetX = 50;
+	grid2.axisXLabel = "X'";
+	grid2.axisYLabel = "Z";
+	grid2.init();
+	 	
+	/*
+	for (i=0; i<10; i++) {
+		rndX = Math.floor(Math.random() * Math.floor(grid1.maxX/20));
+		rndY = Math.floor(Math.random() * Math.floor(grid1.maxY/20));
+		grid1.drawPoint(rndX, rndY, "@"+i);
+		// console.log(rndX + " - " + rndY + " - " + "@"+i);
+	}
+	*/
+
+	xVal = parseInt(document.getElementById("xVal").value);
+	yVal = parseInt(document.getElementById("yVal").value);
+	zVal = parseInt(document.getElementById("zVal").value);
+
+	////////////////////////////////
+	// on Grid1:
+	//----------------------
+
+	// alpha
+	if (xVal != 0) {
+		alphaR = Math.atan(yVal/xVal);
+	} else {
+		alphaR = Math.PI/2;
+	}
+	alphaD = alphaR * 180 / Math.PI;
+	console.log("alpha: " + alphaD + "(" + alphaR + ")");
+	grid1.drawPoint(0, 0, "A");
+	grid1.drawPoint(xVal, yVal, "D");
+	grid1.drawLine(0, 0, xVal, yVal);
+
+
+	// coxa B(X/Y)
+	Xb = Math.cos(alphaR) * coxaLength;
+	Yb = Math.sin(alphaR) * coxaLength;
+	grid1.drawPoint(Xb, Yb, "B");
+	
+	
+	// AD (on grid 1)
+	AD1 = Math.sqrt(Math.pow(xVal, 2) + Math.pow(yVal, 2));
+	console.log("AD1: " + AD1);
+
+
+	////////////////////////////////
+	// on Grid2:
+	//----------------------
+
+	Xb = coxaLength;
+	Yb = coxaZShift;
+
+	Xd = AD1;
+	Yd = zVal;
+	
+	grid2.drawPoint(0, Yb, "A");
+	grid2.drawPoint(Xb, Yb, "B");
+	grid2.drawPoint(Xd, Yd, "D");
+
+	grid2.drawLine(0, Yb, Xb, Yb);
+
+	grid2.drawCircle(Xb, Yb, femurLength);
+	grid2.drawCircle(Xd, Yd, tibiaLength);
+	
+
+	//////////////////////////////
+	// intersections
+	// http://www.cyberforum.ru/pascal/thread106540.html
+	// https://planetcalc.ru/8098/?license=1
+	x1 = Xb;
+	y1 = Yb;
+	r1 = femurLength;
+
+	x2 = Xd;
+	y2 = Yd;
+	r2 = tibiaLength;
+
+	d = Math.sqrt(Math.pow(x1-x2, 2)+Math.pow(y1-y2, 2));
+	console.log("D: " + d);
+
+	b = (Math.pow(r2, 2)-Math.pow(r1, 2)+Math.pow(d, 2))/(2*d);
+	a = d-b;
+	h = Math.sqrt(Math.pow(r2, 2)-Math.pow(b, 2));
+	x = x1+(x2-x1)/(d/a);
+	y = y1+(y2-y1)/(d/a);
+	x3 = x-(y-y2)*h/b;
+	y3 = y+(x-x2)*h/b;
+	x4 = x+(y-y2)*h/b;
+	y4 = y-(x-x2)*h/b;
+
+	console.log("X1: " + x3 + "\nY1: " + y3);
+	console.log("X2: " + x4 + "\nY2: " + y4);
+	
+	grid2.drawPoint(x3, y3, "C1");
+	grid2.drawPoint(x4, y4, "C2");
+
+
+	// C (on grid 2)
+	if (y3 > y4) {
+		Xc = x3;
+		Yc = y3;
+	} else {
+		Xc = x4;
+		Yc = y4;
+	}
+
+	Xc = x4;
+	Yc = y4;
+
+	console.log("Xc: " + Xc + "\nYc: " + Yc);
+	grid2.drawLine(Xb, Yb, Xc, Yc);
+	grid2.drawLine(Xc, Yc, Xd, Yd);
+	///////////////
+	
+
+	// AC (on grid 2)
+	AC2 = Math.sqrt(Math.pow(Xc, 2) + Math.pow(Yc - coxaZShift, 2));
+	console.log("AC2: " + AC2);
+
+
+	// BD (on grid 2)
+	BD2 = Math.sqrt(Math.pow(Xd-Xb, 2) + Math.pow(Yd-Yb, 2));
+	console.log("BD2: " + BD2);
+
+	// https://www.calc.ru/raschet-treugolnika.html
+
+	// gamma
+	A = femurLength;
+	B = tibiaLength;
+	C = BD2;
+	console.log("A: " + A + "\nB: " + B + "\nC: " + C);
+	gammaR = Math.acos((Math.pow(A, 2)+Math.pow(B, 2)-Math.pow(C, 2))/(2*A*B));
+	gammaD = gammaR * 180 / Math.PI;
+	console.log("gamma: " + gammaD + "(" + gammaR + ")");
+	
+
+	// beta
+	A = femurLength;
+	B = coxaLength;
+	C = AC2;
+	console.log("A: " + A + "\nB: " + B + "\nC: " + C);
+	betaR = Math.acos((Math.pow(A, 2)+Math.pow(B, 2)-Math.pow(C, 2))/(2*A*B));
+	betaD = betaR * 180 / Math.PI;
+	console.log("beta: " + betaD + "(" + betaR + ")");
+	
+}
+
+</script>
+
