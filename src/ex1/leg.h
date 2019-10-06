@@ -45,7 +45,7 @@ class Leg {
     // servo speed
     float speedC, speedF, speedT;
 
-    int updateInterval = 10;
+    int updateSpeed = 10;
     unsigned long lastUpdate;
 
   public:
@@ -63,6 +63,10 @@ class Leg {
 
       speedC = speedF = speedT = 1;
 
+    }
+
+    void setSpeed(int s) {
+      updateSpeed = s;
     }
 
     int getCoxaPin() {
@@ -310,7 +314,7 @@ class Leg {
 
     void update()
     {
-      if ((millis() - lastUpdate) > updateInterval)
+      if ((millis() - lastUpdate) > updateSpeed)
       {
 
         lastUpdate = millis();

@@ -42,6 +42,8 @@ void setup() {
 }
 
 
+int progNum = 0;
+
 void loop() {
 
 
@@ -56,19 +58,39 @@ void loop() {
 
 
     if (intData[0] == 1) {
-      //      program_step_forward();
-      //      zd = intData[1];
-      
+      progNum = 1;
+      progStep = 0;
+      leg1.setSpeed(10);
+      leg2.setSpeed(10);
+      leg3.setSpeed(10);
+      leg4.setSpeed(10);
+      progRun = true;
+    }
+
+    if (intData[0] == 2) {
+      progNum = 2;
+      progStep = 0;
+      leg1.setSpeed(20);
+      leg2.setSpeed(20);
+      leg3.setSpeed(20);
+      leg4.setSpeed(20);
       progRun = true;
     }
 
     if (intData[0] == -1) {
+      progNum = 0;
+      progStep = 0;
       progRun = false;
     }
 
 
   }
 
-  checkUpdateInterval();
+
+  switch (progNum) {
+    case 1: doOneProgramStep(programRunForward); break;
+    case 2: doOneProgramStep(programRunUpDown); break;
+  }
+
 
 }
