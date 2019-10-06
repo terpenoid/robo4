@@ -162,6 +162,13 @@ LegState computeAngles(Point point) {
   betaD = betaR * 180 / PI;
   //Serial.print("beta: "); Serial.print(betaD); Serial.print("("); Serial.print(betaR); Serial.println(")");
 
+  // fix for "beta > 180"
+  if (Yc < Yb) {
+    //Serial.println("fix beta");
+    betaD = 360 - betaD;
+    //Serial.print("beta: "); Serial.println(betaD);
+  }
+
 
   result.alpha = alphaD;
   result.beta = betaD;

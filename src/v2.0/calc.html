@@ -13,13 +13,15 @@ canvas {
 X: <input type="text" value="100" id="xVal" onchange="calc()">
 Y: <input type="text" value="100" id="yVal" onchange="calc()">
 Z: <input type="text" value="-20" id="zVal" onchange="calc()">
+leg: <input type="text" value="0" id="legVal" onchange="calc()">
 <br>
+
+Step 2:
+<canvas id="grid2" width="800" height="800"></canvas>
 
 Step 1:
 <canvas id="grid1" width="600" height="600"></canvas>
 
-Step 2:
-<canvas id="grid2" width="800" height="800"></canvas>
 
 <script>
 
@@ -178,6 +180,8 @@ function calc() {
 	xVal = parseInt(document.getElementById("xVal").value);
 	yVal = parseInt(document.getElementById("yVal").value);
 	zVal = parseInt(document.getElementById("zVal").value);
+	
+	legVal = parseInt(document.getElementById("legVal").value);
 
 	////////////////////////////////
 	// on Grid1:
@@ -306,6 +310,41 @@ function calc() {
 	betaR = Math.acos((Math.pow(A, 2)+Math.pow(B, 2)-Math.pow(C, 2))/(2*A*B));
 	betaD = betaR * 180 / Math.PI;
 	console.log("beta: " + betaD + "(" + betaR + ")");
+	
+	if (Yc < Yb) {
+		console.log("beta fix");
+		betaD = 360 - betaD;
+		console.log("beta: " + betaD);
+	}
+	
+	
+	
+	switch (legVal) {
+		case 0: 
+			alphaD = alphaD + 90;
+			betaD = betaD - 90;
+			gammaD = gammaD;
+		break;
+		case 1: 
+			alphaD = 90 - alphaD;
+			betaD = 270 - betaD;
+			gammaD = 180 - gammaD;
+		break;
+		case 2: 
+			alphaD = alphaD + 90;
+			betaD = betaD - 90;
+			gammaD = gammaD;
+		break;
+		case 3: 
+			alphaD = alphaD + 90;
+			betaD = betaD - 90;
+			gammaD = gammaD;
+		break;
+	}
+	
+	console.log("alpha' = " + alphaD);
+	console.log("beta' = " + betaD);
+	console.log("gamma' = " + gammaD);
 	
 }
 
