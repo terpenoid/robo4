@@ -16,10 +16,10 @@ void setup() {
   Serial.print("Uploaded: ");   Serial.println(__DATE__);
   Serial.println();
 
-  
+
   hc06.begin(9600);
   hc06.println("Hello from Arduino");
-  
+
   servosInit();
 
   //  for (int i = 0; i < 4; i++) {
@@ -67,29 +67,34 @@ void loop() {
     }
     Serial.println();
 
-    hc06.println("doing PROG[" + String(intData[0]) + "]...");
-
-    if (intData[0] == 1) {
-      progNum = 1;
-      progStep = 0;
-      leg1.setSpeed(10);
-      leg2.setSpeed(10);
-      leg3.setSpeed(10);
-      leg4.setSpeed(10);
+    if (intData[0] == 1 && intData[1] == 1) {
+      hc06.println("doing PROG[" + String(intData[1]) + "]...");
+      if (progNum != 1) {
+        progNum = 1;
+        progStep = 0;
+      }
       progRun = true;
     }
 
-    if (intData[0] == 2) {
-      progNum = 2;
-      progStep = 0;
-      leg1.setSpeed(20);
-      leg2.setSpeed(20);
-      leg3.setSpeed(20);
-      leg4.setSpeed(20);
+    if (intData[0] == 1 && intData[1] == 2) {
+      hc06.println("doing PROG[" + String(intData[1]) + "]...");
+      if (progNum != 2) {
+        progNum = 2;
+        progStep = 0;
+      }
       progRun = true;
+    }
+
+    if (intData[0] == 2 && intData[1] > 0 && intData[1] < 100) {
+      hc06.println("set SPEED[" + String(intData[1]) + "]...");
+      leg1.setSpeed(intData[1]);
+      leg2.setSpeed(intData[1]);
+      leg3.setSpeed(intData[1]);
+      leg4.setSpeed(intData[1]);
     }
 
     if (intData[0] == -1) {
+      hc06.println("STOP");
       progNum = 0;
       progStep = 0;
       progRun = false;
@@ -97,7 +102,6 @@ void loop() {
 
 
   }
-
 
   switch (progNum) {
     case 1: doOneProgramStep(programRunForward); break;
