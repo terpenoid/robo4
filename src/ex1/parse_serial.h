@@ -30,9 +30,9 @@ boolean recievedFlag;
 boolean getStarted;
 byte index;
 String string_convert;
-void parsing() {
-  while (Serial.available() > 0) {
-    char incomingByte = Serial.read();      // обязательно ЧИТАЕМ входящий символ
+void parsing(Stream &port) { // Serial/BT/etc
+  while (port.available() > 0) {
+    char incomingByte = port.read();      // обязательно ЧИТАЕМ входящий символ
     if (incomingByte == '$') {              // если это $
       getStarted = true;                    // поднимаем флаг, что можно парсить
     } else if (incomingByte != ';' && getStarted) { // пока это не ;
@@ -60,18 +60,3 @@ void parsing() {
     }
   }
 }
-
-
-//void setup() {
-//  Serial.begin(9600);
-//}
-//void loop() {
-//  parsing();       // функция парсинга
-//  if (recievedFlag) {                           // если получены данные
-//    recievedFlag = false;
-//    for (byte i = 0; i < PARSE_AMOUNT; i++) { // выводим элементы массива
-//      Serial.print(intData[i]); Serial.print(" ");
-//    }
-//    Serial.println();
-//  }
-//}
