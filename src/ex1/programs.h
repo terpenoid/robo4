@@ -72,7 +72,7 @@ void programRunForward() {
 
   if (!standPosition) { // left
 
-    int program[8][4][3] = {
+    int program[][4][3] = {
 
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
 
@@ -92,7 +92,7 @@ void programRunForward() {
 
   } else { // right
 
-    int program[8][4][3] = {
+    int program[][4][3] = {
 
       { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
 
@@ -122,7 +122,7 @@ void programRunUpDown() {
 
   if (!standPosition) { // left
 
-    int program[4][4][3] = {
+    int program[][4][3] = {
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
       { {0, y, zu}, {s, y, zu}, {s, y, zu} , {0, y, zu} },
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
@@ -132,7 +132,7 @@ void programRunUpDown() {
 
   } else {
 
-    int program[4][4][3] = {
+    int program[][4][3] = {
       { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
       { {s, y, zu}, {0, y, zu}, {0, y, zu} , {s, y, zu} },
       { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
@@ -151,7 +151,7 @@ void programTurnRight() {
 
   if (!standPosition) { // left
 
-    int program[8][4][3] = {
+    int program[][4][3] = {
 
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
 
@@ -159,19 +159,23 @@ void programTurnRight() {
       { {y, 0, zu}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
       { {y, 0, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
 
-      { {s, y, zd}, {y, 0, zd}, {0, y, zd} , {s, y, zd} },//roll
+//      { {s, y, zd}, {y, 0, zd}, {0, y, zd} , {s, y, zd} },//roll
+//
+//      { {s, y, zd}, {y, 0, zu}, {0, y, zd} , {s, y, zd} }, //2
+//      { {s, y, zd}, {0, y, zu}, {0, y, zd} , {s, y, zd} },
+//      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
 
-      { {s, y, zd}, {y, 0, zu}, {0, y, zd} , {s, y, zd} }, //2
-      { {s, y, zd}, {0, y, zu}, {0, y, zd} , {s, y, zd} },
-      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
+      { {y, 0, zd}, {s, y, zu}, {s, y, zd} , {0, y, zd} }, //2u
+      { {s, y, zd}, {0, y, zu}, {0, y, zd} , {s, y, zd} }, //roll
+      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} }, //2d
 
     };
 
-    endOfOneProgramStep(program, 8, true);
+    endOfOneProgramStep(program, 7, true);
 
   } else { // right
 
-    int program[8][4][3] = {
+    int program[][4][3] = {
 
       { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
 
@@ -179,15 +183,19 @@ void programTurnRight() {
       { {s, y, zd}, {0, y, zd}, {y, 0, zu} , {s, y, zd} },
       { {s, y, zd}, {0, y, zd}, {y, 0, zd} , {s, y, zd} },
 
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {y, 0, zd} }, //roll
+//      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {y, 0, zd} }, //roll
+//
+//      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {y, 0, zu} }, //4
+//      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} },
+//      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
 
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {y, 0, zu} }, //4
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} },
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {y, 0, zd} , {s, y, zu} }, //4u
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} }, //roll
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} }, //4d
 
     };
 
-    endOfOneProgramStep(program, 8, true);
+    endOfOneProgramStep(program, 7, true);
 
   }
 
@@ -202,7 +210,7 @@ void programTurnLeft() {
 
   if (!standPosition) { // left
 
-    int program[8][4][3] = {
+    int program[][4][3] = {
 
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
 
@@ -210,19 +218,23 @@ void programTurnLeft() {
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {y, 0, zu} },
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {y, 0, zd} },
 
-      { {s, y, zd}, {0, y, zd}, {y, 0, zd} , {s, y, zd} }, //roll
+//      { {s, y, zd}, {0, y, zd}, {y, 0, zd} , {s, y, zd} }, //roll
+//
+//      { {s, y, zd}, {0, y, zd}, {y, 0, zu} , {s, y, zd} }, //3
+//      { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} },
+//      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
 
-      { {s, y, zd}, {0, y, zd}, {y, 0, zu} , {s, y, zd} }, //3
-      { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} },
-      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
+      { {0, y, zd}, {s, y, zd}, {s, y, zu} , {y, 0, zd} }, //3u
+      { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} }, //roll
+      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} }, //3d
 
     };
 
-    endOfOneProgramStep(program, 8, true);
+    endOfOneProgramStep(program, 7, true);
 
   } else { // right
 
-    int program[8][4][3] = {
+    int program[][4][3] = {
 
       { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
 
@@ -230,15 +242,19 @@ void programTurnLeft() {
       { {s, y, zd}, {y, 0, zu}, {0, y, zd} , {s, y, zd} },
       { {s, y, zd}, {y, 0, zd}, {0, y, zd} , {s, y, zd} },
 
-      { {y, 0, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} }, // roll
+//      { {y, 0, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} }, // roll
+//
+//      { {y, 0, zu}, {s, y, zd}, {s, y, zd} , {0, y, zd} }, //1
+//      { {0, y, zu}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
+//      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
 
-      { {y, 0, zu}, {s, y, zd}, {s, y, zd} , {0, y, zd} }, //1
-      { {0, y, zu}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
+      { {s, y, zu}, {y, 0, zd}, {0, y, zd} , {s, y, zd} }, //1u
+      { {0, y, zu}, {s, y, zd}, {s, y, zd} , {0, y, zd} }, // roll
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
 
     };
 
-    endOfOneProgramStep(program, 8, true);
+    endOfOneProgramStep(program, 7, true);
 
   }
 
@@ -255,7 +271,7 @@ void programHandShake() {
 
   if (!standPosition) { // left
 
-    int program[13][4][3] = {
+    int program[][4][3] = {
 
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
 
@@ -281,7 +297,7 @@ void programHandShake() {
 
   } else { // right
 
-    int program[13][4][3] = {
+    int program[][4][3] = {
 
       { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
 
