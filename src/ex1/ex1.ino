@@ -53,12 +53,13 @@ void setup() {
 }
 
 
-int progNum = 0;
+
 
 void loop() {
 
 
   parsing(hc06);       // функция парсинга
+//  parsing(Serial);       // функция парсинга
   if (recievedFlag) {                           // если получены данные
     recievedFlag = false;
     Serial.println("[data]:");
@@ -67,21 +68,10 @@ void loop() {
     }
     Serial.println();
 
-    if (intData[0] == 1 && intData[1] == 1) {
-      hc06.println("doing PROG[" + String(intData[1]) + "]...");
-      if (progNum != 1) {
-        progNum = 1;
-        progStep = 0;
-      }
-      progRun = true;
-    }
-
-    if (intData[0] == 1 && intData[1] == 2) {
-      hc06.println("doing PROG[" + String(intData[1]) + "]...");
-      if (progNum != 2) {
-        progNum = 2;
-        progStep = 0;
-      }
+    if (intData[0] == 1) {
+      hc06.println("next PROG[" + String(intData[1]) + "]...");      
+      nextProgNum = intData[1];
+      if (!progRun && progStep == 0) currentProgNum = intData[1];
       progRun = true;
     }
 
@@ -95,18 +85,14 @@ void loop() {
 
     if (intData[0] == -1) {
       hc06.println("STOP");
-      progNum = 0;
-      progStep = 0;
-      progRun = false;
+      progRun = !progRun;
     }
 
+    if (!currentProgNum) currentProgNum = nextProgNum;
+
 
   }
-
-  switch (progNum) {
-    case 1: doOneProgramStep(programRunForward); break;
-    case 2: doOneProgramStep(programRunUpDown); break;
-  }
-
+  
+  doOneProgramStep();
 
 }
