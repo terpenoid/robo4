@@ -25,6 +25,10 @@ void programTurnRight();
 void programTurnLeft();
 void programHandShake();
 
+void programStepInL();
+void programStepInR();
+void programStepOut();
+void programUpDown2();
 
 
 
@@ -40,6 +44,12 @@ void doOneProgramStep() {
       case 3: programTurnLeft(); break;
       case 4: programRunUpDown(); break;
       case 5: programHandShake(); break;
+
+      case 6: programStepInL(); break;
+      case 7: programStepInR(); break;
+      case 8: programStepOut(); break;
+      case 9: programUpDown2(); break;
+      
     }
 
   }
@@ -67,6 +77,118 @@ void endOfOneProgramStep(int program[][4][3], int cnt, boolean again) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+
+void programStepInL() {
+  int program[][4][3] = {
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+
+    { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+    
+    { {s*2, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+    { {s, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+    { {s, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+
+    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zu} },
+    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} },
+    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
+    
+  };
+  endOfOneProgramStep(program, 9, false);
+  standPosition = 0;
+}
+
+void programStepInR() {
+  int program[][4][3] = {
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+
+    { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+    { {s*2, y, zd}, {s*2, y, zu}, {0, y, zd} , {0, y, zd} },
+    { {s*2, y, zd}, {s, y, zu}, {0, y, zd} , {0, y, zd} },
+    { {s*2, y, zd}, {s, y, zd}, {0, y, zd} , {0, y, zd} },
+
+    { {s, y, zd}, {0, y, zd}, {s, y, zd} , {s, y, zd} },
+
+    { {s, y, zd}, {0, y, zd}, {s, y, zu} , {s, y, zd} },
+    { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} },
+    { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
+    
+  };
+  endOfOneProgramStep(program, 9, false);
+  standPosition = 1;
+}
+
+
+void programStepOut() {
+
+  if (!standPosition) { // left
+  
+    int program[][4][3] = {
+      
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
+
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} },
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zu} },
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+
+      { {s, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+      { {s, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+      { {s*2, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+      { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+      { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+      
+    };
+    
+    endOfOneProgramStep(program, 9, false);
+
+  } else { // right
+
+    int program[][4][3] = {
+      
+      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
+
+      { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {s, y, zu} , {s, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {s, y, zd} , {s, y, zd} },
+
+      { {s*2, y, zd}, {s, y, zd}, {0, y, zd} , {0, y, zd} },
+
+      { {s*2, y, zd}, {s, y, zu}, {0, y, zu} , {0, y, zd} },
+      { {s*2, y, zd}, {s*2, y, zu}, {0, y, zu} , {0, y, zd} },
+      { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+      { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+      
+    };
+    
+    endOfOneProgramStep(program, 9, false);
+    
+  }
+  
+}
+
+void programUpDown2() {
+  int program[][4][3] = {
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+    { {s, y, zu}, {s, y, zu}, {s, y, zu} , {s, y, zu} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+    { {s, y, zu}, {s, y, zu}, {s, y, zu} , {s, y, zu} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+  };
+  endOfOneProgramStep(program, 5, false);
+}
+
+
+
+
+
+
+
 
 void programRunForward() {
 
