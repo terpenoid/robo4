@@ -42,6 +42,9 @@ class Leg {
     float coxaPosNow, femurPosNow, tibiaPosNow;
     float coxaPosExpect, femurPosExpect, tibiaPosExpect;
 
+    //last leg XYZ position
+    int legX, legY, legZ;
+
     // servo speed
     float speedC, speedF, speedT;
 
@@ -82,6 +85,20 @@ class Leg {
     int getTibiaPin() {
       return tibiaPin;
     }
+
+
+    int getX() {
+      return legX;
+    }
+    int getY() {
+      return legY;
+    }
+    int getZ() {
+      return legZ;
+    }
+
+
+    
 
     int getRealAngleForServo (int servo, int angle) {
 
@@ -274,13 +291,15 @@ class Leg {
       pwm.setPWM(pin, 0, angleToPulse(real));
     }
 
+
+    // main method for moving one leg to XYZ
     void goToPos (int expectedX, int expectedY, int expectedZ) {
 
       computeExpectPos (expectedX, expectedY, expectedZ);
 
-
-
-
+      legX = expectedX;
+      legY = expectedY;
+      legZ = expectedZ;
 
       float difC, difF, difT;
 
@@ -324,6 +343,13 @@ class Leg {
           moveServo(2, tibiaPin, round(tibiaPosNow));
         }
 
+//        // check position
+//        if (!difC && !difF && !difT) {
+////          Serial.println("current position of leg[" + String(legNum) + "]:");
+////          Serial.println(String(legX) + ", " + String(legY) + ", " + String(legZ) + ", ");
+////          Serial.println("diff: " + String(difC) + " - " + String(difF) + " - " + String(difT));
+//        }
+        
       }
       
     }

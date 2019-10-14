@@ -31,6 +31,12 @@ boolean getStarted;
 byte index;
 String string_convert;
 void parsing(Stream &port) { // Serial/BT/etc
+
+  // pre clean array
+  for (byte i=0; i<PARSE_AMOUNT; i++) {
+    intData[i] = 0;
+  }
+  
   while (port.available() > 0) {
     char incomingByte = port.read();      // обязательно ЧИТАЕМ входящий символ
     if (incomingByte == '$') {              // если это $

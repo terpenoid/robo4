@@ -8,7 +8,7 @@ int zu = -20;
 int customParam[4] = {0, 0, 0, 0};
 
 
-int updateInterval = 100;
+int updateInterval = 50;
 unsigned long lastUpdate;
 
 int currentProgNum = 0;
@@ -23,8 +23,8 @@ int storedSpeed = 10;
 int standPosition = 0; // 0=left; 1=right
 
 
+void programReadyPosition();
 void programRunForward(); // declaration of function who will be sendet as argument
-void programRunUpDown();
 void programTurnRight();
 void programTurnLeft();
 void programHandShake();
@@ -48,7 +48,7 @@ void doOneProgramStep() {
       case 1: programRunForward(); break;
       case 2: programTurnRight(); break;
       case 3: programTurnLeft(); break;
-      case 4: programRunUpDown(); break;
+      case 4: programReadyPosition(); break;
       case 5: programHandShake(); break;
 
       case 6: programStepInL(); break;
@@ -158,33 +158,13 @@ void programRunForward() {
 
 }
 
-void programRunUpDown() {
-
-  if (!standPosition) { // left
-
-    int program[][4][3] = {
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
-      { {0, y, zu}, {s, y, zu}, {s, y, zu} , {0, y, zu} },
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
-      { {0, y, zu}, {s, y, zu}, {s, y, zu} , {0, y, zu} },
-    };
-    endOfOneProgramStep(program, 4, false);
-
-  } else {
-
-    int program[][4][3] = {
-      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
-      { {s, y, zu}, {0, y, zu}, {0, y, zu} , {s, y, zu} },
-      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
-      { {s, y, zu}, {0, y, zu}, {0, y, zu} , {s, y, zu} },
-    };
-    endOfOneProgramStep(program, 4, false);
-
-  }
-
+void programReadyPosition() {
+  int program[][4][3] = {
+    { {s, y, 0}, {s, y, 0}, {s, y, 0} , {s, y, 0} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+  };
+  endOfOneProgramStep(program, 2, false);
 }
-
-
 
 
 void programTurnRight() {
@@ -479,15 +459,22 @@ void programUpDown2() {
 }
 
 
-void programRolling() {
 
-  //angle???
-  
+
+//int calcRollingCoord(Leg l, char coord, int angle) {
+//  float Ar = customParam[0] * PI / 180;
+//  if (coord == 'x') {
+//    return l.getX() * cos(Ar) - l.getY() * sin(Ar);
+//  } else {
+//    return l.getX() * sin(Ar) + l.getY() * cos(Ar);
+//  }
+//}
+void programRolling() { 
   int program[][4][3] = {
     { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-    { {0, y+20, zd}, {y, 0, zd}, {0, y+20, zd} , {y, 0, zd} },
+    { {0, y+18, zd}, {y, 0, zd}, {0, y+18, zd} , {y, 0, zd} },
     { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-    { {y, 0, zd}, {0, y+20, zd}, {y, 0, zd} , {0, y+20, zd} },
+    { {y, 0, zd}, {0, y+18, zd}, {y, 0, zd} , {0, y+18, zd} },
     { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
   };
   endOfOneProgramStep(program, 5, false);
