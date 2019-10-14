@@ -5,6 +5,8 @@ int zd = -50;
 int zu = -20;
 
 
+int customParam[4] = {0, 0, 0, 0};
+
 
 int updateInterval = 100;
 unsigned long lastUpdate;
@@ -14,6 +16,8 @@ int nextProgNum = 0;
 
 int progRun = false;
 int progStep = 0;
+
+int storedSpeed = 10;
 
 
 int standPosition = 0; // 0=left; 1=right
@@ -29,7 +33,9 @@ void programStepInL();
 void programStepInR();
 void programStepOut();
 void programUpDown2();
-
+void programRolling();
+void programShift();
+void programSway();
 
 
 
@@ -48,8 +54,10 @@ void doOneProgramStep() {
       case 6: programStepInL(); break;
       case 7: programStepInR(); break;
       case 8: programStepOut(); break;
-      case 9: programUpDown2(); break;
-      
+      case 9: programUpDown2(); break; // 2 params - abs val of Z
+      case 10: programRolling(); break; //
+      case 11: programShift(); break; // 2 params - rel L/R 
+      case 12: programSway(); break; // 2 params - rel L/R
     }
 
   }
@@ -63,6 +71,15 @@ void doOneProgramStep() {
 
 
 void endOfOneProgramStep(int program[][4][3], int cnt, boolean again) {
+
+  if (customParam[2] && (customParam[2] != storedSpeed)) {
+    storedSpeed = leg1.getSpeed();
+    leg1.setSpeed(customParam[2]);
+    leg2.setSpeed(customParam[2]);
+    leg3.setSpeed(customParam[2]);
+    leg4.setSpeed(customParam[2]);
+  }
+  
   leg1.goToPos(program[progStep][0][0], program[progStep][0][1], program[progStep][0][2]);
   leg2.goToPos(program[progStep][1][0], program[progStep][1][1], program[progStep][1][2]);
   leg3.goToPos(program[progStep][2][0], program[progStep][2][1], program[progStep][2][2]);
@@ -73,121 +90,22 @@ void endOfOneProgramStep(int program[][4][3], int cnt, boolean again) {
     progStep = 0;
     progRun = (currentProgNum != nextProgNum || again);
     currentProgNum = nextProgNum;
+
+    if (customParam[2] && (customParam[2] != storedSpeed)) {
+      leg1.setSpeed(storedSpeed);
+      leg2.setSpeed(storedSpeed);
+      leg3.setSpeed(storedSpeed);
+      leg4.setSpeed(storedSpeed);
+    }
+
+    if (customParam[3]) {
+      progRun = (customParam[3] > 0);
+    }
+    
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
-
-
-void programStepInL() {
-  int program[][4][3] = {
-    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-
-    { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-    
-    { {s*2, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-    { {s, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-    { {s, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-
-    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-
-    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zu} },
-    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} },
-    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
-    
-  };
-  endOfOneProgramStep(program, 9, false);
-  standPosition = 0;
-}
-
-void programStepInR() {
-  int program[][4][3] = {
-    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-
-    { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-
-    { {s*2, y, zd}, {s*2, y, zu}, {0, y, zd} , {0, y, zd} },
-    { {s*2, y, zd}, {s, y, zu}, {0, y, zd} , {0, y, zd} },
-    { {s*2, y, zd}, {s, y, zd}, {0, y, zd} , {0, y, zd} },
-
-    { {s, y, zd}, {0, y, zd}, {s, y, zd} , {s, y, zd} },
-
-    { {s, y, zd}, {0, y, zd}, {s, y, zu} , {s, y, zd} },
-    { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} },
-    { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
-    
-  };
-  endOfOneProgramStep(program, 9, false);
-  standPosition = 1;
-}
-
-
-void programStepOut() {
-
-  if (!standPosition) { // left
-  
-    int program[][4][3] = {
-      
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
-
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} },
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zu} },
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-
-      { {s, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-
-      { {s, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-      { {s*2, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-      { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-
-      { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-      
-    };
-    
-    endOfOneProgramStep(program, 9, false);
-
-  } else { // right
-
-    int program[][4][3] = {
-      
-      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
-
-      { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} },
-      { {s, y, zd}, {0, y, zd}, {s, y, zu} , {s, y, zd} },
-      { {s, y, zd}, {0, y, zd}, {s, y, zd} , {s, y, zd} },
-
-      { {s*2, y, zd}, {s, y, zd}, {0, y, zd} , {0, y, zd} },
-
-      { {s*2, y, zd}, {s, y, zu}, {0, y, zu} , {0, y, zd} },
-      { {s*2, y, zd}, {s*2, y, zu}, {0, y, zu} , {0, y, zd} },
-      { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
-
-      { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-      
-    };
-    
-    endOfOneProgramStep(program, 9, false);
-    
-  }
-  
-}
-
-void programUpDown2() {
-  int program[][4][3] = {
-    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-    { {s, y, zu}, {s, y, zu}, {s, y, zu} , {s, y, zu} },
-    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-    { {s, y, zu}, {s, y, zu}, {s, y, zu} , {s, y, zu} },
-    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
-  };
-  endOfOneProgramStep(program, 5, false);
-}
-
-
-
-
-
-
 
 
 void programRunForward() {
@@ -445,4 +363,163 @@ void programHandShake() {
 
   }
 
+}
+
+
+/////////////////////////////////////
+
+
+void programStepInL() {
+  int program[][4][3] = {
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+
+    { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+    
+    { {s*2, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+    { {s, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+    { {s, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+
+    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zu} },
+    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} },
+    { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
+    
+  };
+  endOfOneProgramStep(program, 9, false);
+  standPosition = 0;
+}
+
+void programStepInR() {
+  int program[][4][3] = {
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+
+    { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+    { {s*2, y, zd}, {s*2, y, zu}, {0, y, zd} , {0, y, zd} },
+    { {s*2, y, zd}, {s, y, zu}, {0, y, zd} , {0, y, zd} },
+    { {s*2, y, zd}, {s, y, zd}, {0, y, zd} , {0, y, zd} },
+
+    { {s, y, zd}, {0, y, zd}, {s, y, zd} , {s, y, zd} },
+
+    { {s, y, zd}, {0, y, zd}, {s, y, zu} , {s, y, zd} },
+    { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} },
+    { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
+    
+  };
+  endOfOneProgramStep(program, 9, false);
+  standPosition = 1;
+}
+
+
+void programStepOut() {
+
+  if (!standPosition) { // left
+  
+    int program[][4][3] = {
+      
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
+
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} },
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zu} },
+      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+
+      { {s, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+      { {s, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+      { {s*2, y, zu}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+      { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+      { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+      
+    };
+    
+    endOfOneProgramStep(program, 9, false);
+
+  } else { // right
+
+    int program[][4][3] = {
+      
+      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
+
+      { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {s, y, zu} , {s, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {s, y, zd} , {s, y, zd} },
+
+      { {s*2, y, zd}, {s, y, zd}, {0, y, zd} , {0, y, zd} },
+
+      { {s*2, y, zd}, {s, y, zu}, {0, y, zu} , {0, y, zd} },
+      { {s*2, y, zd}, {s*2, y, zu}, {0, y, zu} , {0, y, zd} },
+      { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
+
+      { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+      
+    };
+    
+    endOfOneProgramStep(program, 9, false);
+    
+  }
+  
+}
+
+
+void programUpDown2() {
+
+  int shiftU = customParam[0] ? customParam[0] : zu;
+  int shiftD = customParam[1] ? customParam[1] : zd;
+  
+  int program[][4][3] = {
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+    { {s, y, shiftU}, {s, y, shiftU}, {s, y, shiftU} , {s, y, shiftU} },
+    { {s, y, shiftD}, {s, y, shiftD}, {s, y, shiftD} , {s, y, shiftD} },
+    { {s, y, shiftU}, {s, y, shiftU}, {s, y, shiftU} , {s, y, shiftU} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+  };
+  endOfOneProgramStep(program, 5, false);
+}
+
+
+void programRolling() {
+
+  //angle???
+  
+  int program[][4][3] = {
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+    { {0, y+20, zd}, {y, 0, zd}, {0, y+20, zd} , {y, 0, zd} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+    { {y, 0, zd}, {0, y+20, zd}, {y, 0, zd} , {0, y+20, zd} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+  };
+  endOfOneProgramStep(program, 5, false);
+}
+
+
+void programShift() {
+
+  int shiftL = customParam[0] ? customParam[0] : y/2;
+  int shiftR = customParam[1] ? customParam[1] : shiftL;
+  
+  int program[][4][3] = {
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+    { {s, y-shiftL, zd}, {s, y+shiftL, zd}, {s, y+shiftL, zd} , {s, y-shiftL, zd} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+    { {s, y+shiftR, zd}, {s, y-shiftR, zd}, {s, y-shiftR, zd} , {s, y+shiftR, zd} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+  };
+  endOfOneProgramStep(program, 5, false);
+}
+
+void programSway() {
+
+  int shiftL = customParam[0] ? customParam[0] : 20;
+  int shiftR = customParam[1] ? customParam[1] : shiftL;
+  
+  int program[][4][3] = {
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+    { {s, y, zd+shiftL}, {s, y, zd-shiftR}, {s, y, zd-shiftR} , {s, y, zd+shiftL} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+    { {s, y, zd-shiftL}, {s, y, zd+shiftR}, {s, y, zd+shiftR} , {s, y, zd-shiftL} },
+    { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
+  };
+  endOfOneProgramStep(program, 5, false);
 }

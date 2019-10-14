@@ -69,6 +69,10 @@ class Leg {
       updateSpeed = s;
     }
 
+    int getSpeed() {
+      return updateSpeed;
+    }
+
     int getCoxaPin() {
       return coxaPin;
     }
@@ -80,14 +84,6 @@ class Leg {
     }
 
     int getRealAngleForServo (int servo, int angle) {
-
-      // Serial.print("(((((");
-      // Serial.print(legNum);
-      // Serial.print(" : ");
-      // Serial.print(servo);
-      // Serial.print(" : ");
-      // Serial.print(angle);
-
 
       switch (legNum) {
         case 0:
@@ -119,10 +115,6 @@ class Leg {
           }
           break;
       }
-
-      // Serial.print(" -> ");
-      // Serial.print(angle);
-      // Serial.println("))))))))))))");
 
       return angle;
     }
@@ -302,14 +294,6 @@ class Leg {
       speedF = (difF / maxDif);
       speedT = (difT / maxDif);
 
-
-      //      Serial.println("=[leg " + String(legNum) + "]========================================");
-      //      Serial.println("Set:" + String(expectedX) + ", " + String(expectedY) + ", " + String(expectedZ));
-      //      Serial.println("Dif:" + String(difC) + ", " + String(difF) + ", " + String(difT));
-      //      Serial.println("Max:" + String(maxDif));
-      //      Serial.println("Speed:" + String(speedC) + ", " + String(speedF) + ", " + String(speedT));
-      //      Serial.println("\n\n\n");
-
     }
 
     void update()
@@ -340,14 +324,11 @@ class Leg {
           moveServo(2, tibiaPin, round(tibiaPosNow));
         }
 
-
-
-
       }
+      
     }
 
     boolean inMove() {
-      //return (coxaPosExpect != coxaPosNow || femurPosExpect != femurPosNow || tibiaPosExpect != tibiaPosNow);
 
       int difC, difF, difT;
 

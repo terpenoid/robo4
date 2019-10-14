@@ -69,8 +69,12 @@ void loop() {
     Serial.println();
 
     if (intData[0] == 1) {
-      hc06.println("next PROG[" + String(intData[1]) + "]...");      
+      hc06.println("next PROG[" + String(intData[1]) + "]...");
       nextProgNum = intData[1];
+      customParam[0] = intData[2];
+      customParam[1] = intData[3];
+      customParam[2] = intData[4];
+      customParam[3] = intData[5];
       if (!progRun && progStep == 0) currentProgNum = intData[1];
       progRun = true;
     }
@@ -86,6 +90,16 @@ void loop() {
     if (intData[0] == -1) {
       hc06.println("STOP");
       progRun = !progRun;
+    }
+
+    if (intData[0] == -2) {
+      hc06.println("RESET");
+      leg1.goToPos(0, 105, 80);
+      leg2.goToPos(0, 105, 80);
+      leg3.goToPos(0, 105, 80);
+      leg4.goToPos(0, 105, 80);
+
+      currentProgNum = nextProgNum = progStep = 0;
     }
 
     if (!currentProgNum) currentProgNum = nextProgNum;
