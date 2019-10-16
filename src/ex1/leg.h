@@ -52,6 +52,7 @@ class Leg {
     unsigned long lastUpdate;
 
   public:
+    Leg(){}
     Leg(int leg, int coxa, int femur, int tibia)
     {
       legNum = leg;
