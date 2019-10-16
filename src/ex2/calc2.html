@@ -1,0 +1,309 @@
+<!--todo: https://www.instructables.com/id/vPython-Spider-Robot-simulator/ -->
+
+<style>
+
+canvas {
+	border:1px solid #d3d3d3;
+	display: block;
+	margin-bottom: 20px;
+}
+
+</style>
+
+X1: <input type="text" value="50" id="x1Val" onchange="calc()">
+Y1: <input type="text" value="60" id="y1Val" onchange="calc()">
+<br>
+X2: <input type="text" value="50" id="x2Val" onchange="calc()">
+Y2: <input type="text" value="60" id="y2Val" onchange="calc()">
+<br>
+X3: <input type="text" value="50" id="x3Val" onchange="calc()">
+Y3: <input type="text" value="60" id="y3Val" onchange="calc()">
+<br>
+X4: <input type="text" value="50" id="x4Val" onchange="calc()">
+Y4: <input type="text" value="60" id="y4Val" onchange="calc()">
+<br>
+leg: <input type="text" value="1" id="legVal" onchange="calc()">
+<hr>
+
+<canvas id="grid1" width="1300" height="1300"></canvas>
+
+<script>
+
+function Grid (canvasId) {
+
+	this.showBlindZones = false;
+
+	this.id = canvasId;
+
+	c = document.getElementById(this.id);
+	this.ctx = c.getContext("2d");
+
+	this.axisXLabel = "X";
+	this.axisYLabel = "Y";
+
+	this.scale = 2;
+	this.gridStep = 10;
+	this.maxX = this.ctx.canvas.width;
+	this.maxY = this.ctx.canvas.height;
+	this.offsetX = this.maxX / 2;
+	this.offsetY = this.maxY / 2;
+
+	this.clear = function() {
+		this.ctx.clearRect(0, 0, this.maxX, this.maxY);
+	};
+
+	this.prepareX = function(x) {
+		return x * this.scale + this.offsetX;
+	};
+
+	this.prepareY = function(y) {
+		return this.offsetY - y * this.scale;
+	};
+
+	this.rnd = function(f) {
+		// https://stackoverflow.com/questions/9453421/how-to-round-float-numbers-in-javascript
+		return Number((f).toFixed(2));
+	};
+
+	this.drawCircle = function(x, y, R, color) {
+		if (!color) color = "#0f0";
+		this.ctx.beginPath();
+		this.ctx.arc(this.prepareX(x), this.prepareY(y), R*this.scale, 0, Math.PI*2, true);
+		this.ctx.strokeStyle = color;
+		this.ctx.stroke();
+	};
+
+	this.drawCirclePart = function(x, y, R, a1, a2, color) {
+		if (!color) color = "#0f0";
+		this.ctx.beginPath();
+		this.ctx.arc(this.prepareX(x), this.prepareY(y), R*this.scale, a1, a2, true);
+		this.ctx.strokeStyle = color;
+		this.ctx.stroke();
+    };
+	
+	this.drawCircleFill = function(x, y, R, color) {
+		if (!color) color = "#ffaaaa";
+		this.ctx.beginPath();
+		this.ctx.arc(this.prepareX(x), this.prepareY(y), R*this.scale, 0, Math.PI*2, false);
+		this.ctx.fillStyle = color;
+		this.ctx.fill();
+	};
+
+	this.drawPoint = function(x, y, label, color) {
+		if (!color) color = "#f00";
+		this.drawCircle(x, y, 2/this.scale, color);
+		this.ctx.font = "10px sans";
+		this.ctx.fillStyle = "#000";
+		this.ctx.textAlign = "center";
+		this.ctx.fillText(label + " (" + this.rnd(x) + ", " + this.rnd(y) + ")", this.prepareX(x), this.prepareY(y) - 10);
+	};
+
+	this.drawLine = function(x1, y1, x2, y2, color) {
+		if (!color) color = "#00f";
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.prepareX(x1), this.prepareY(y1));
+		this.ctx.lineTo(this.prepareX(x2), this.prepareY(y2));
+		this.ctx.strokeStyle = color;
+		this.ctx.stroke();
+	};
+
+	this.init = function() {
+
+		this.clear();
+
+		if (this.showBlindZones) {
+			//////////////////////////
+			// blind zone
+			this.drawCircleFill(this.maxX/2, this.maxY/2, this.maxX*2, "#ffbbbb");
+			this.drawCircleFill(coxaLength, coxaZShift, femurLength+tibiaLength, "#FFF");
+			this.drawCircleFill(73, -1, tibiaLength, "#FFF");
+			this.drawCircleFill(coxaLength, coxaZShift, 40, "#ffbbbb");
+			this.drawCircleFill(coxaLength, coxaZShift+femurLength, tibiaLength, "#ffbbbb");
+		}
+
+
+		// grid
+		for (x=0-this.offsetX; x<this.maxX/this.scale; x+=this.gridStep) {
+			this.drawLine(x, 0-this.offsetY, x, this.maxY/this.scale, "#eee");
+		}
+
+		for (y=0-this.offsetY; y<this.maxY/this.scale; y+=this.gridStep) {
+			this.drawLine(0-this.offsetX, y, this.maxX/this.scale, y, "#eee");
+		}
+
+		// axises
+		this.drawLine(0-this.offsetX, 0, this.maxX/this.scale, 0, "#ddd"); // X
+		this.drawLine(0, 0-this.offsetY, 0, this.maxY/this.scale, "#ddd"); // Y
+
+		this.ctx.beginPath();
+		this.ctx.arc(this.offsetX, this.offsetY, 2, 0, Math.PI*2, true);
+		this.ctx.strokeStyle = "#ccc";
+		this.ctx.stroke();
+
+		this.ctx.font = "12px sans";
+		this.ctx.fillStyle = "#ccc";
+		this.ctx.textAlign = "center";
+		this.ctx.fillText("0", this.offsetX-10, this.offsetY+15);
+		this.ctx.fillText(this.axisXLabel, this.maxX-20, this.offsetY+15);
+		this.ctx.fillText(this.axisYLabel, this.offsetX-10, 20);
+
+	};
+}
+//--------------------------------------------------
+
+
+// dimensions
+coxaZShift = 26;
+coxaLength = 27;
+femurLength = 54;
+tibiaLength = 78;
+
+bodyWidth = 70;
+bodyHeight = 70;
+
+
+class Point {
+    constructor(x, y, z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+
+        this.bodyWidth = bodyWidth;
+        this.bodyHeight = bodyHeight;
+
+        this.leg = 0;
+    }
+
+    setBody ({w, h}) {
+        this.bodyWidth = w;
+        this.bodyHeight = h;
+    }
+
+    setLeg (l) {
+        this.leg = l;
+    }
+
+    getAbsPos() {
+        var x1, y1;
+        switch(this.leg) {
+            case 0:
+                x1 = this.x;
+                y1 = this.y;
+                break;
+            case 1:
+                x1 = this.x + this.bodyWidth/2;
+                y1 = this.y + this.bodyHeight/2;
+                break;
+            case 2:
+                x1 = this.x + this.bodyWidth/2;
+                y1 = - this.y - this.bodyHeight/2;
+                break;
+            case 3:
+                x1 = - this.x - this.bodyWidth/2;
+                y1 = - this.y - this.bodyHeight/2;
+                break;
+            case 4:
+                x1 = - this.x - this.bodyWidth/2;
+                y1 = this.y + this.bodyHeight/2;
+                break;
+        }
+        return {x: x1, y: y1};
+    }
+
+}
+
+
+
+
+
+function calc() {
+
+	var grid1 = new Grid("grid1");
+	grid1.scale = 3.87;
+	grid1.axisXLabel = "X'";
+	grid1.axisYLabel = "Y";
+	grid1.init();
+
+	x1Val = parseInt(document.getElementById("x1Val").value);
+	y1Val = parseInt(document.getElementById("y1Val").value);
+
+    x2Val = parseInt(document.getElementById("x2Val").value);
+    y2Val = parseInt(document.getElementById("y2Val").value);
+
+    x3Val = parseInt(document.getElementById("x3Val").value);
+    y3Val = parseInt(document.getElementById("y3Val").value);
+
+    x4Val = parseInt(document.getElementById("x4Val").value);
+    y4Val = parseInt(document.getElementById("y4Val").value);
+
+	legVal = parseInt(document.getElementById("legVal").value);
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+    leg1 = new Point(x1Val, y1Val, 0); leg1.setLeg(1);
+    leg2 = new Point(x2Val, y2Val, 0); leg2.setLeg(2);
+    leg3 = new Point(x3Val, y3Val, 0); leg3.setLeg(3);
+    leg4 = new Point(x4Val, y4Val, 0); leg4.setLeg(4);
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+    grid1.drawLine(bodyWidth/2, bodyHeight/2, -bodyWidth/2, bodyHeight/2, "#559955");
+    grid1.drawLine(bodyWidth/2, -bodyHeight/2, -bodyWidth/2, -bodyHeight/2, "#559955");
+    grid1.drawLine(bodyWidth/2, bodyHeight/2, bodyWidth/2, -bodyHeight/2, "#559955");
+    grid1.drawLine(-bodyWidth/2, bodyHeight/2, -bodyWidth/2, -bodyHeight/2, "#559955");
+
+    grid1.drawCircle(0, 0, 5, "#559955");
+    grid1.drawCirclePart(bodyWidth/2, bodyHeight/2, 120, 0, -Math.PI/2, "#559955");
+    grid1.drawCirclePart(-bodyWidth/2, bodyHeight/2, 120, -Math.PI/2, -Math.PI, "#559955");
+    grid1.drawCirclePart(-bodyWidth/2, -bodyHeight/2, 120, -Math.PI, Math.PI/2, "#559955");
+    grid1.drawCirclePart(bodyWidth/2, -bodyHeight/2, 120, -Math.PI*1.5, -Math.PI*2, "#559955");
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+    grid1.drawPoint(leg1.getAbsPos().x, leg1.getAbsPos().y, "@1");
+    grid1.drawPoint(leg2.getAbsPos().x, leg2.getAbsPos().y, "@2");
+    grid1.drawPoint(leg3.getAbsPos().x, leg3.getAbsPos().y, "@3");
+    grid1.drawPoint(leg4.getAbsPos().x, leg4.getAbsPos().y, "@4");
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+    grid1.drawLine(leg2.getAbsPos().x, leg2.getAbsPos().y, leg3.getAbsPos().x, leg3.getAbsPos().y);
+    grid1.drawLine(leg3.getAbsPos().x, leg3.getAbsPos().y, leg4.getAbsPos().x, leg4.getAbsPos().y);
+    grid1.drawLine(leg4.getAbsPos().x, leg4.getAbsPos().y, leg2.getAbsPos().x, leg2.getAbsPos().y);
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+    AbsXc = (leg2.getAbsPos().x + leg3.getAbsPos().x + leg4.getAbsPos().x)/3;
+    AbsYc = (leg2.getAbsPos().y + leg3.getAbsPos().y + leg4.getAbsPos().y)/3;
+
+    centerOfMass = new Point(AbsXc, AbsYc, 0);
+
+    grid1.drawCircle(AbsXc, AbsYc, 5, "#995555");
+    grid1.drawPoint(AbsXc, AbsYc, "New", "#995555");
+
+    NewAbsX2 = leg2.getAbsPos().x - AbsXc;
+    NewAbsY2 = leg2.getAbsPos().y - AbsYc;
+    grid1.drawPoint(NewAbsX2, NewAbsY2, "New2", "#559955");
+    console.log("New @2: " + NewAbsX2 + " / " + NewAbsY2);
+
+    NewAbsX3 = leg3.getAbsPos().x - AbsXc;
+    NewAbsY3 = leg3.getAbsPos().y - AbsYc;
+
+    NewAbsX4 = leg4.getAbsPos().x - AbsXc;
+    NewAbsY4 = leg4.getAbsPos().y - AbsYc;
+
+    grid1.drawLine(NewAbsX2, NewAbsY2, NewAbsX3, NewAbsY3, "#559955");
+    grid1.drawLine(NewAbsX3, NewAbsY3, NewAbsX4, NewAbsY4, "#559955");
+    grid1.drawLine(NewAbsX4, NewAbsY4, NewAbsX2, NewAbsY2, "#559955");
+
+
+    NewAbsX1 = leg1.getAbsPos().x - AbsXc;
+    NewAbsY1 = leg1.getAbsPos().y - AbsYc;
+    grid1.drawPoint(NewAbsX1, NewAbsY1, "New1", "#ff5555");
+    grid1.drawPoint(NewAbsX1+60, NewAbsY1, "New1+", "#ff5555");
+
+
+}
+
+</script>
+

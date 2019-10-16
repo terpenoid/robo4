@@ -61,7 +61,7 @@ void loop() {
 
 
   parsing(hc06);       // функция парсинга
-  //  parsing(Serial);       // функция парсинга
+//    parsing(Serial);       // функция парсинга
   if (recievedFlag) {                           // если получены данные
     recievedFlag = false;
     Serial.println("[data]:");

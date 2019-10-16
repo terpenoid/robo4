@@ -31,6 +31,8 @@ class Leg {
     int legNum = 0; // 0-3
 
     // dimensions
+    int bodyWidth = 70;
+    int bodyHeight = 70;
     int coxaZShift = 26;
     int coxaLength = 27;
     int femurLength = 54;
@@ -49,7 +51,7 @@ class Leg {
     // servo speed
     float speedC, speedF, speedT;
 
-    int updateSpeed = 10;
+    int updateSpeed = 50;
     unsigned long lastUpdate;
 
   public:
@@ -97,6 +99,23 @@ class Leg {
     }
     int getZ() {
       return legZ;
+    }
+
+    int getAbsX() {
+      switch (legNum) {
+        case 0: return legX + bodyWidth/2; break;
+        case 1: return legX + bodyWidth/2; break;
+        case 2: return -legX - bodyWidth/2; break;
+        case 3: return -legX - bodyWidth/2; break;
+      }
+    }
+    int getAbsY() {
+      switch (legNum) {
+        case 0: return legY + bodyHeight/2; break;
+        case 1: return -legY - bodyHeight/2; break;
+        case 2: return -legY - bodyHeight/2; break;
+        case 3: return legY + bodyHeight/2; break;
+      }
     }
 
 

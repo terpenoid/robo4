@@ -428,8 +428,8 @@ void programStepOut() {
 
       { {s*2, y, zd}, {s, y, zd}, {0, y, zd} , {0, y, zd} },
 
-      { {s*2, y, zd}, {s, y, zu}, {0, y, zu} , {0, y, zd} },
-      { {s*2, y, zd}, {s*2, y, zu}, {0, y, zu} , {0, y, zd} },
+      { {s*2, y, zd}, {s, y, zu}, {0, y, zd} , {0, y, zd} },
+      { {s*2, y, zd}, {s*2, y, zu}, {0, y, zd} , {0, y, zd} },
       { {s*2, y, zd}, {s*2, y, zd}, {0, y, zd} , {0, y, zd} },
 
       { {s, y, zd}, {s, y, zd}, {s, y, zd} , {s, y, zd} },
