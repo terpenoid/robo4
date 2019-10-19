@@ -303,6 +303,36 @@ function calc() {
     grid1.drawPoint(NewAbsX1+60, NewAbsY1, "New1+", "#ff5555");
 
 
+
+/*
+	///////////
+	// https://studopedia.su/19_67414_povorot-osey-koordinat.html
+
+	x = xVal;
+	y = yVal;
+
+	aG = aVal;
+	aR = (aG * Math.PI) / 180;
+	
+	console.log(x);
+	console.log(y);
+	console.log(aG);
+	console.log(aR);
+
+	x1 = x * Math.cos(aR) - y * Math.sin(aR);
+	y1 = x * Math.sin(aR) + y * Math.cos(aR);
+
+	console.log(x1);
+	console.log(y1);
+
+	grid1.drawLine(0, 0, x1, y1);
+	grid1.drawPoint(x1, y1, "New (" + aG + ")");
+*/
+	
+}
+
+
+
 }
 
 </script>
