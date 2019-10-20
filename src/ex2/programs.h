@@ -1,3 +1,10 @@
+#include <QueueArray.h> // https://playground.arduino.cc/Code/QueueArray/
+
+typedef struct progStep { int coords[4][3]; } progStep;
+QueueArray <progStep> queue;
+
+
+
 int y = 60;
 int s = 50; // step
 int s_ = 70; // betw 2 legs

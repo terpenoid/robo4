@@ -24,7 +24,7 @@ int angleToPulse(int angle) {
 
 
 
-
+int anglesFix[4][3] = {{0, 10, 0}, {0, -5, 5}, {0, 0, -4}, {0, -3, -2}};
 
 class Leg {
 
@@ -51,7 +51,7 @@ class Leg {
     // servo speed
     float speedC, speedF, speedT;
 
-    int updateSpeed = 50;
+    int updateSpeed = 10;
     unsigned long lastUpdate;
 
   public:
@@ -178,8 +178,6 @@ class Leg {
           }
           break;
       }
-
-      int anglesFix[4][3] = {{0, 10, 0}, {0, -5, 5}, {0, 0, -4}, {0, -3, -2}};
 
       return angle + anglesFix[legNum][servo];
     }

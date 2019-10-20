@@ -69,10 +69,10 @@ void loop() {
 
     if (intData[0] == 1) {
       
-      leg1.goToPos(0, 60, -50);
+      leg1.goToPos(50, 60, -50);
       leg2.goToPos(50, 60, -50);
       leg3.goToPos(50, 60, -50);
-      leg4.goToPos(0, 60, -50);
+      leg4.goToPos(50, 60, -50);
 
       progRun = true;
     }
@@ -123,10 +123,10 @@ void loop() {
       nX4 = NaX4 - 35; nY4 = NaY4 - 35;
       
 
-//      leg1.goToPos(leg1.getX() - Xc, leg1.getY() - Yc, leg1.getZ());
-//      leg2.goToPos(leg2.getX() - Xc, leg2.getY() + Yc, leg2.getZ());
-//      leg3.goToPos(leg3.getX() + Xc, leg3.getY() + Yc, leg3.getZ());
-//      leg4.goToPos(leg4.getX() + Xc, leg4.getY() - Yc, leg4.getZ());
+      leg1.goToPos(leg1.getX() - Xc, leg1.getY() - Yc, leg1.getZ());
+      leg2.goToPos(leg2.getX() - Xc, leg2.getY() + Yc, leg2.getZ());
+      leg3.goToPos(leg3.getX() + Xc, leg3.getY() + Yc, leg3.getZ());
+      leg4.goToPos(leg4.getX() + Xc, leg4.getY() - Yc, leg4.getZ());
         
       progRun = true;
     }
@@ -137,6 +137,18 @@ void loop() {
       int pins[4][3] = {{0, 1, 2}, {4, 5, 6}, {8, 9, 10}, {12, 13, 14}};
       pwm.setPWM(pins[intData[1]][intData[2]], 0, angleToPulse(intData[3]));
     }
+
+
+    if (intData[0] == 81) {
+      progRun = false;
+      switch (intData[1]) {
+        case 0: leg1.moveServo(intData[2], intData[3]); break;
+        case 1: leg2.moveServo(intData[2], intData[3]); break;
+        case 2: leg3.moveServo(intData[2], intData[3]); break;
+        case 3: leg4.moveServo(intData[2], intData[3]); break;
+      }
+    }
+    
 
     if (intData[0] == 9) {      
       leg1.goToPos(intData[1], intData[2], intData[3]);
