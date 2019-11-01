@@ -23,8 +23,9 @@ int storedSpeed = 10;
 int standPosition = 0; // 0=left; 1=right
 
 
-void programReadyPosition();
-void programRunForward(); // declaration of function who will be sendet as argument
+void programReadyPosition(); // declaration of function who will be sendet as argument
+void programRunForward(); 
+void programRunBackward();
 void programTurnRight();
 void programTurnLeft();
 void programHandShake();
@@ -45,19 +46,22 @@ void doOneProgramStep() {
     lastUpdate = millis();
 
     switch (currentProgNum) {
-      case 1: programRunForward(); break;
-      case 2: programTurnRight(); break;
-      case 3: programTurnLeft(); break;
-      case 4: programReadyPosition(); break;
-      case 5: programHandShake(); break;
+      case 1: programReadyPosition(); break;
+      case 2: programRunForward(); break;
+      case 3: programRunBackward(); break;
+      case 4: programTurnLeft(); break;
+      case 5: programTurnRight(); break;
 
-      case 6: programStepInL(); break;
-      case 7: programStepInR(); break;
-      case 8: programStepOut(); break;
-      case 9: programUpDown2(); break; // 2 params - abs val of Z
-      case 10: programRolling(); break; //
-      case 11: programShift(); break; // 2 params - rel L/R 
-      case 12: programSway(); break; // 2 params - rel L/R
+      case 6: programHandShake(); break;
+
+      case 7: programStepInL(); break;
+      case 8: programStepInR(); break;
+      case 9: programStepOut(); break;
+      
+      case 10: programUpDown2(); break; // 2 params - abs val of Z
+      case 11: programRolling(); break; //??? @todo
+      case 12: programShift(); break; // 2 params - rel L/R 
+      case 13: programSway(); break; // 2 params - rel L/R
     }
 
   }
@@ -114,16 +118,66 @@ void programRunForward() {
 
     int program[][4][3] = {
 
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
+      { {0, y, zd}, {s, y, zd}, {s, y, zd}, {0, y, zd} },
 
-      { {0, y, zu}, {s, y, zd}, {s, y, zd} , {0, y, zd} }, //1
-      { {s * 2, y - 20, zu}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
-      { {s * 2, y - 20, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
+      { {0, y, zu}, {s, y, zd}, {s, y, zd}, {0, y, zd} }, //1
+      { {s * 2, y - 20, zu}, {s, y, zd}, {s, y, zd}, {0, y, zd} },
+      { {s * 2, y - 20, zd}, {s, y, zd}, {s, y, zd}, {0, y, zd} },
 
-      { {s, y, zd}, {0, y, zd}, {s * 2, y, zd} , {s, y, zd} },  //shift
+      { {s, y, zd}, {0, y, zd}, {s * 2, y, zd}, {s, y, zd} },  //shift
 
-      { {s, y, zd}, {0, y, zd}, {s * 2, y, zu} , {s, y, zd} }, //3
-      { {s, y, zd}, {0, y, zd}, {0, y, zu} , {s, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {s * 2, y, zu}, {s, y, zd} }, //3
+      { {s, y, zd}, {0, y, zd}, {0, y, zu}, {s, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {0, y, zd}, {s, y, zd} },
+
+    };
+
+    endOfOneProgramStep(program, 8, true);
+
+  } else { // right
+
+    int program[][4][3] = {
+
+      { {s, y, zd}, {0, y, zd}, {0, y, zd}, {s, y, zd} },
+
+      { {s, y, zd}, {0, y, zu}, {0, y, zd}, {s, y, zd} }, //2
+      { {s, y, zd}, {s * 2, y - 20, zu}, {0, y, zd}, {s, y, zd} },
+      { {s, y, zd}, {s * 2, y - 20, zd}, {0, y, zd}, {s, y, zd} },
+
+      { {0, y, zd}, {s, y, zd}, {s, y, zd}, {s * 2, y, zd} }, //shift
+
+      { {0, y, zd}, {s, y, zd}, {s, y, zd}, {s * 2, y, zu} }, //4
+      { {0, y, zd}, {s, y, zd}, {s, y, zd}, {0, y, zu} },
+      { {0, y, zd}, {s, y, zd}, {s, y, zd}, {0, y, zd} },
+
+    };
+
+    endOfOneProgramStep(program, 8, true);
+
+  }
+
+  if (progStep == 0) {
+    standPosition = !standPosition;
+  }
+
+}
+
+void programRunBackward() {
+
+  if (!standPosition) { // left
+
+    int program[][4][3] = {
+
+      { {0, y, zd}, {s, y, zd}, {s, y, zd}, {0, y, zd} },
+
+      { {0, y, zd}, {s, y, zd}, {s, y, zd}, {0, y, zu} }, //4
+      { {0, y, zd}, {s, y, zd}, {s, y, zd}, {s * 2, y - 20, zu} },
+      { {0, y, zd}, {s, y, zd}, {s, y, zd}, {s * 2, y - 20, zd} },
+
+      { {s, y, zd}, {s * 2, y, zd}, {0, y, zd}, {s, y, zd} },  //shift
+
+      { {s, y, zd}, {s * 2, y, zu}, {0, y, zd}, {s, y, zd} }, //2
+      { {s, y, zd}, {0, y, zu}, {0, y, zd}, {s, y, zd} },
       { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
 
     };
@@ -134,16 +188,16 @@ void programRunForward() {
 
     int program[][4][3] = {
 
-      { {s, y, zd}, {0, y, zd}, {0, y, zd} , {s, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {0, y, zd}, {s, y, zd} },
 
-      { {s, y, zd}, {0, y, zu}, {0, y, zd} , {s, y, zd} }, //2
-      { {s, y, zd}, {s * 2, y - 20, zu}, {0, y, zd} , {s, y, zd} },
-      { {s, y, zd}, {s * 2, y - 20, zd}, {0, y, zd} , {s, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {0, y, zu}, {s, y, zd} }, //3
+      { {s, y, zd}, {0, y, zd}, {s * 2, y - 20, zu}, {s, y, zd} },
+      { {s, y, zd}, {0, y, zd}, {s * 2, y - 20, zd}, {s, y, zd} },
 
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s * 2, y, zd} }, //shift
+      { {s * 2, y, zd}, {s, y, zd}, {s, y, zd}, {0, y, zd} }, //shift
 
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {s * 2, y, zu} }, //4
-      { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zu} },
+      { {s * 2, y, zu}, {s, y, zd}, {s, y, zd}, {0, y, zd} }, //1
+      { {0, y, zu}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
       { {0, y, zd}, {s, y, zd}, {s, y, zd} , {0, y, zd} },
 
     };
