@@ -1,6 +1,5 @@
 int y = 60;
 int s = 50; // step
-int s_ = 70; // betw 2 legs
 int zd = -50;
 int zu = -20;
 

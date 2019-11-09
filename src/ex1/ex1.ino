@@ -56,22 +56,24 @@ void setup() {
 
 
 
+Stream &currentPort = hc06; // hc06/Serial
+
 
 void loop() {
 
-
-  parsing(hc06);       // функция парсинга
-//    parsing(Serial);       // функция парсинга
-  if (recievedFlag) {                           // если получены данные
+  parsing(currentPort); // функция парсинга
+  
+  if (recievedFlag) { // если получены данные
+    
     recievedFlag = false;
-    Serial.println("[data]:");
+    currentPort.print("[data]: ");
     for (byte i = 0; i < PARSE_AMOUNT; i++) { // выводим элементы массива
-      Serial.print(intData[i]); Serial.print(" ");
+      currentPort.print(intData[i]); currentPort.print(" ");
     }
-    Serial.println();
+    currentPort.println();
 
     if (intData[0] == 1) {
-      hc06.println("next PROG[" + String(intData[1]) + "]...");
+      currentPort.println("next PROG[" + String(intData[1]) + "]...");
       nextProgNum = intData[1];
       customParam[0] = intData[2];
       customParam[1] = intData[3];
@@ -81,21 +83,44 @@ void loop() {
       progRun = true;
     }
 
-    if (intData[0] == 2 && intData[1] > 0 && intData[1] < 100) {
-      hc06.println("set SPEED[" + String(intData[1]) + "]...");
+    if (intData[0] == 2 && intData[1] >= 0 && intData[1] < 100) {
+      currentPort.println("set SPEED[" + String(intData[1]) + "]");
       leg1.setSpeed(intData[1]);
       leg2.setSpeed(intData[1]);
       leg3.setSpeed(intData[1]);
       leg4.setSpeed(intData[1]);
     }
 
+    if (intData[0] == 3) {
+
+      // zu
+      if (intData[1] == 1) {
+        if ((intData[2] < -20) && (intData[2] > zd)) {
+          zu = intData[2];
+          currentPort.println("set ZU[" + String(zu) + "]");
+        }
+      }
+
+      // zd
+      if (intData[1] == 2) {
+        if ((intData[2] > -80) && (intData[2] < zu)) {
+          zd = intData[2];
+          currentPort.println("set ZD[" + String(zd) + "]");
+        }
+      }
+      
+    }
+
+    
+
+    ///////////////////////////////////////////////
     if (intData[0] == -1) {
-      hc06.println("STOP");
+      currentPort.println("STOP!");
       progRun = !progRun;
     }
 
     if (intData[0] == -2) {
-      hc06.println("RESET");
+      currentPort.println("RESET!");
       leg1.goToPos(0, 105, 80);
       leg2.goToPos(0, 105, 80);
       leg3.goToPos(0, 105, 80);
